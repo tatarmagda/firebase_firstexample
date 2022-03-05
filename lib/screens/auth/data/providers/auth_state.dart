@@ -41,5 +41,7 @@ class AuthState extends ChangeNotifier {
     }
   }
 
-  Future signOutWithEmail() async {}
+  Future signOutWithEmail() async {
+    await auth.signOut();
+  }
 }
