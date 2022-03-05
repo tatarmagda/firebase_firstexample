@@ -11,6 +11,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  bool _signUp = false;
+  bool _showPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +28,47 @@ class _SignUpPageState extends State<SignUpPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
+                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(labelText: "Email"),
                   controller: _emailController,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: EdgeInsets.all(8.0),
                 child: TextFormField(
-                  decoration: InputDecoration(labelText: "Password"),
+                  keyboardType: TextInputType.visiblePassword,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _showPassword = !_showPassword;
+                        });
+                      },
+                      icon: Icon(_showPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                    ),
+                  ),
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: !_showPassword,
                 ),
-              )
+              ),
+              Center(
+                child: ElevatedButton(
+                    child: Text(_signUp ? "Sign up" : "Log in"),
+                    onPressed: _signUp ? () {} : () {}),
+              ),
+              Center(
+                child: TextButton(
+                  child: Text(!_signUp ? "Sign up" : "Log in"),
+                  onPressed: () {
+                    setState(() {
+                      _signUp = !_signUp;
+                    });
+                  },
+                ),
+              ),
             ],
           ),
         ),
