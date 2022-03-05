@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_example/screens/auth/data/providers/auth_state.dart';
 import 'package:firebase_example/screens/auth/sign_up.dart';
+import 'package:firebase_example/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,8 +20,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => AuthState(FirebaseAuth.instance),
-        )
+          create: (context) => AuthState(FirebaseAuth.instance),
+        ),
+        StreamProvider(
+            create: (context) => context.read<AuthState>().userChanges,
+            initialData: null)
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -28,8 +32,18 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: SignUpPage(),
+        home: LoginHandler(),
       ),
     );
+  }
+}
+
+class LoginHandler extends StatelessWidget {
+  const LoginHandler({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final _firebaseUser = context.watch<User?>();
+    return _firebaseUser == null ? SignUpPage() : Home();
   }
 }
