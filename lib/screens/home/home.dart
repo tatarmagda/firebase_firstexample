@@ -8,13 +8,45 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.white,
+            onPressed: () {
+              Provider.of<AuthState>(context, listen: false).signOutWithEmail();
+            },
+            child: Text("Log out"),
+            shape: CircleBorder(
+                side: BorderSide(color: Color.fromARGB(0, 31, 32, 94))),
+          ),
+        ],
+      ),
       body: Center(
-        child: TextButton(
-          child: Text("log out"),
+        child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: 5,
+            itemBuilder: (context, index) {
+              return listItem("Brand", index.toString());
+            }),
+      ),
+    );
+  }
+
+  Widget listItem(brand, model) {
+    return Dismissible(
+      key: UniqueKey(),
+      onDismissed: (direction) {
+        if (direction == DismissDirection.startToEnd ||
+            direction == DismissDirection.endToStart) print("delete");
+      },
+      child: ListTile(
+        title: Text(brand),
+        subtitle: Text(model),
+        trailing: IconButton(
           onPressed: () {
-            Provider.of<AuthState>(context, listen: false).signOutWithEmail();
+            print("delete");
           },
+          icon: Icon(Icons.edit),
         ),
       ),
     );
