@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_example/screens/auth/data/providers/auth_state.dart';
 import 'package:firebase_example/screens/home/data/models/cars_model.dart';
+import 'package:firebase_example/screens/home/widgets/car_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -98,17 +99,11 @@ class Home extends StatelessWidget {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (_) => AlertDialog(
-                title: Text(brand),
-                content: Text(model),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text("cancel")),
-                  TextButton(onPressed: () {}, child: Text("save"))
-                ],
+              builder: (_) => Dialog(
+                child: CarModal(
+                  brand: brand,
+                  model: model,
+                ),
               ),
             );
           },
