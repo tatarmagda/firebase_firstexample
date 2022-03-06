@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_example/screens/auth/data/providers/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,11 +23,22 @@ class Home extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return listItem("Brand", index.toString());
+        // streambuilder lub future builder ale future tylko raz
+        child: FutureBuilder(
+            future: null,
+            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (!snapshot.hasData) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else {
+                return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return listItem("Brand", index.toString());
+                    });
+              }
             }),
       ),
     );
