@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_example/screens/auth/data/providers/auth_state.dart';
+import 'package:firebase_example/screens/home/data/models/cars_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,21 +28,35 @@ class Home extends StatelessWidget {
       body: Center(
         // streambuilder lub future builder ale future tylko raz
         child: FutureBuilder(
-            future: null,
-            builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      return listItem("Brand", index.toString());
-                    });
-              }
-            }),
+          future: FirebaseFirestore.instance.collection("cars").get(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else {
+              List _listOfCars =
+                  snapshot.data!.docs.map((DocumentSnapshot document) {
+                Map<String, dynamic> data =
+                    document.data()! as Map<String, dynamic>;
+                return Cars.fromJson(data);
+              }).toList();
+
+              return ListView.builder(
+                shrinkWrap: true,
+                itemCount: _listOfCars.length,
+                itemBuilder: (context, index) {
+                  Cars _car = _listOfCars[index];
+
+                  return listItem(
+                    _car.brand,
+                    _car.model,
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
