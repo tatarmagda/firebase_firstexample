@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_example/screens/home/data/models/cars_model.dart';
 import 'package:flutter/material.dart';
 
 class CarModal extends StatefulWidget {
-  CarModal({Key? key, this.brand, this.model}) : super(key: key);
+  CarModal({Key? key, this.docId, this.car}) : super(key: key);
 
-  final String? brand;
-  final String? model;
+  final Cars? car;
+  final String? docId;
 
   @override
   State<CarModal> createState() => _CarModalState();
@@ -14,11 +16,13 @@ class _CarModalState extends State<CarModal> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController? _brandController;
   TextEditingController? _modelController;
+  Cars? _car;
 
   @override
   void initState() {
-    _brandController = TextEditingController(text: widget.brand);
-    _modelController = TextEditingController(text: widget.model);
+    _car = widget.car!;
+    _brandController = TextEditingController(text: _car!.brand);
+    _modelController = TextEditingController(text: _car!.model);
     super.initState();
   }
 
@@ -34,6 +38,11 @@ class _CarModalState extends State<CarModal> {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: TextFormField(
+                onChanged: (v) {
+                  setState(() {
+                    _car!.brand = v;
+                  });
+                },
                 controller: _brandController,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -46,6 +55,11 @@ class _CarModalState extends State<CarModal> {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: TextFormField(
+                onChanged: (v) {
+                  setState(() {
+                    _car!.model = v;
+                  });
+                },
                 controller: _modelController,
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -64,11 +78,28 @@ class _CarModalState extends State<CarModal> {
                     },
                     child: Text("cancel")),
                 TextButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {}
-                      ;
-                    },
-                    child: Text("save"))
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      if (widget.docId == "") {
+                        FirebaseFirestore.instance
+                            .collection("cars")
+                            .add(_car!.toJson())
+                            .whenComplete(
+                              () => Navigator.of(context).pop(),
+                            );
+                      } else {
+                        FirebaseFirestore.instance
+                            .collection("cars")
+                            .doc(widget.docId)
+                            .update(_car!.toJson())
+                            .whenComplete(
+                              () => Navigator.of(context).pop(),
+                            );
+                      }
+                    }
+                  },
+                  child: Text("save"),
+                ),
               ],
             ),
           ],

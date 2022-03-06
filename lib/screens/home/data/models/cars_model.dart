@@ -7,8 +7,8 @@ class Cars {
           brand: json['brand']! as String,
         );
 
-  final String model;
-  final String brand;
+  String? model;
+  String? brand;
 
   Map<String, Object?> toJson() {
     return {

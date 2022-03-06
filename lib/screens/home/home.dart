@@ -58,8 +58,7 @@ class Home extends StatelessWidget {
                   Cars _car = _listOfCars[index];
 
                   return listItem(
-                    _car.brand,
-                    _car.model,
+                    _car,
                     documentsID[index],
                     context,
                   );
@@ -71,16 +70,27 @@ class Home extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Cars data = Cars(model: "model ", brand: "brand");
+          Cars data = Cars(
+            model: " ",
+            brand: "",
+          );
 
-          FirebaseFirestore.instance.collection("cars").add(data.toJson());
+          showDialog(
+            context: context,
+            builder: (_) => Dialog(
+              child: CarModal(
+                car: data,
+                docId: "",
+              ),
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),
     );
   }
 
-  Widget listItem(brand, model, documentsID, context) {
+  Widget listItem(Cars car, documentID, context) {
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {
@@ -88,21 +98,21 @@ class Home extends StatelessWidget {
             direction == DismissDirection.endToStart) {
           FirebaseFirestore.instance
               .collection("cars")
-              .doc(documentsID)
+              .doc(documentID)
               .delete();
         }
       },
       child: ListTile(
-        title: Text(brand),
-        subtitle: Text(model),
+        title: Text(car.brand!),
+        subtitle: Text(car.model!),
         trailing: IconButton(
           onPressed: () {
             showDialog(
               context: context,
               builder: (_) => Dialog(
                 child: CarModal(
-                  brand: brand,
-                  model: model,
+                  car: car,
+                  docId: documentID,
                 ),
               ),
             );
